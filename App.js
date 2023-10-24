@@ -16,6 +16,7 @@ import {
   Receipt21,
   Clock,
   Message,
+  Heart,
   HeartSearch,
   SearchNormal,
   Pencil,
@@ -23,45 +24,16 @@ import {
 import {fontType, colors} from './src/assets/theme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useState} from 'react';
+import {Element3} from 'iconsax-react-native';
+import {BlogList, CategoryList, TodayList, WorkoutList, dataQL} from './data';
+import {ListHorizontal, ListQL, ListToday} from './src/components';
 
 const windowWidth = Dimensions.get('window').width;
-
-const data = [
-  {
-    id: '1',
-    imageUri: 'https://gcdnb.pbrd.co/images/myyURQocYz9m.png?o=1',
-    text: 'Breakfast',
-  },
-  {
-    id: '2',
-    imageUri: 'https://gcdnb.pbrd.co/images/bb7vUVomTypu.png?o=1',
-    text: 'Dessert',
-  },
-  {
-    id: '3',
-    imageUri: 'https://gcdnb.pbrd.co/images/F7krDjR94NLW.png?o=1',
-    text: 'Dinner',
-  },
-  {
-    id: '4',
-    imageUri: 'https://gcdnb.pbrd.co/images/onCvHZAAc81j.png?o=1',
-    text: 'Salad',
-  },
-  {
-    id: '5',
-    imageUri: 'https://gcdnb.pbrd.co/images/CjhSjS9SSoqN.png?o=1',
-    text: 'Fruit',
-  },
-  {
-    id: '6',
-    imageUri: 'https://gcdnb.pbrd.co/images/Tmz2f0rJvMu7.png?o=1',
-    text: 'Juice',
-  },
-];
 
 export default function App() {
   const handleButtonPress = () => {};
   const [searchText, setSearchText] = useState('');
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -70,7 +42,7 @@ export default function App() {
           <SearchNormal color="#F5F7F8" variant="Linear" size={24} />
           <TextInput
             style={styles.searchBar}
-            placeholder="CARI"
+            placeholder="Search"
             value={searchText}
             onChangeText={setSearchText}
           />
@@ -84,6 +56,12 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
+  rowContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    width: 'auto',
+    paddingHorizontal: 20,
+  },
   container: {
     flex: 1,
     backgroundColor: colors.white(),
@@ -207,32 +185,13 @@ const category = StyleSheet.create({
   },
 });
 
-const backgroundColors = [
-  '#219C90',
-  'pink',
-  '#952323',
-  '#79AC78',
-  '#712B75',
-  '#FFB000',
-];
-
-function MyCard({item, index}) {
-  const backgroundColor = backgroundColors[index % backgroundColors.length];
-
-  return (
-    <View style={[styles.cardContainer, {backgroundColor}]}>
-      <Image source={{uri: item.imageUri}} style={styles.cardImage} />
-      <Text style={styles.cardText}>{item.text}</Text>
-    </View>
-  );
-}
-
 const ListBlog = () => {
   const handleButtonPress = () => {};
   return (
     <ScrollView style={{flex: 1}}>
       <Text style={{...styles.title, paddingHorizontal: 24}}>Today</Text>
-      <ScrollView
+      <ListToday data={TodayList} />
+      {/* <ScrollView
         showsHorizontalScrollIndicator={false}
         horizontal
         contentContainerStyle={{gap: 0}}>
@@ -328,80 +287,21 @@ const ListBlog = () => {
             </View>
           </View>
         </View>
-      </ScrollView>
+      </ScrollView> */}
 
       <Text style={{...styles.title, paddingHorizontal: 24}}>Quick Launch</Text>
-      <FlatList
-        style={{paddingHorizontal: 15}}
-        data={data}
-        renderItem={({item, index}) => <MyCard item={item} index={index} />}
-        keyExtractor={item => item.id}
-        numColumns={2}
-        columnWrapperStyle={styles.columnWrapper}
-      />
+      <View style={styles.rowContainer}>
+        {dataQL.map((item, index) => (
+          <ListQL item={item} key={index} />
+        ))}
+      </View>
       <Text style={{...styles.title, paddingHorizontal: 24}}>
         Workout Routine
       </Text>
-      <View style={itemHorizontal.listCard}>
-        <View style={itemHorizontal2.cardItem}>
-          <ImageBackground
-            style={itemHorizontal2.cardImage}
-            resizeMode="cover"
-            imageStyle={{borderRadius: 15}}
-            source={{
-              uri: 'https://i.pinimg.com/564x/eb/f4/d6/ebf4d6f12d1a69b44eab839b227d14df.jpg',
-            }}>
-            <View style={itemHorizontal2.cardContent}>
-              <View style={itemHorizontal2.cardInfo}>
-                <Text style={itemHorizontal2.cardTitle}>Walking</Text>
-                <Text style={itemHorizontal2.cardText}>
-                  walking help you to increase healthy Low-intense exercise
-                </Text>
-              </View>
-            </View>
-          </ImageBackground>
-        </View>
-      </View>
-      <View style={itemHorizontal.listCard}>
-        <View style={itemHorizontal2.cardItem}>
-          <ImageBackground
-            style={itemHorizontal2.cardImage}
-            resizeMode="cover"
-            imageStyle={{borderRadius: 15}}
-            source={{
-              uri: 'https://i.pinimg.com/564x/50/00/09/500009fb714c1d09388e920acfe8ec3a.jpg',
-            }}>
-            <View style={itemHorizontal2.cardContent}>
-              <View style={itemHorizontal2.cardInfo}>
-                <Text style={itemHorizontal2.cardTitle}>Running</Text>
-                <Text style={itemHorizontal2.cardText}>
-                  Running help you to increase healthy Low-intense exercise
-                </Text>
-              </View>
-            </View>
-          </ImageBackground>
-        </View>
-      </View>
-      <View style={itemHorizontal.listCard}>
-        <View style={itemHorizontal2.cardItem}>
-          <ImageBackground
-            style={itemHorizontal2.cardImage}
-            resizeMode="cover"
-            imageStyle={{borderRadius: 15}}
-            source={{
-              uri: 'https://i.pinimg.com/564x/60/f8/67/60f867334f3682d06c35dec455801d86.jpg',
-            }}>
-            <View style={itemHorizontal2.cardContent}>
-              <View style={itemHorizontal2.cardInfo}>
-                <Text style={itemHorizontal2.cardTitle}>CyCling</Text>
-                <Text style={itemHorizontal2.cardText}>
-                  Cycling help you to increase healthy Low-intense exercise
-                </Text>
-              </View>
-            </View>
-          </ImageBackground>
-        </View>
-      </View>
+      {WorkoutList.map((item, index) => (
+        <ListHorizontal item={item} key={index} />
+      ))}
+
       <Text style={{...styles.title, paddingHorizontal: 24}}>Learn</Text>
       <ScrollView
         showsHorizontalScrollIndicator={false}
@@ -697,13 +597,8 @@ const itemHorizontal2 = StyleSheet.create({
   cardItem: {
     width: 350,
     height: 150,
-    // backgroundColor: '#64CCC5',
     borderRadius: 10,
     display: 'flex',
-    // justifyContent: 'center',
-    // alignItems: 'center',
-    // textAlign: 'center',
-    // textAlignVertical: 'center',
   },
   cardItem2: {
     width: 150,
@@ -764,12 +659,6 @@ const itemHorizontal2 = StyleSheet.create({
     height: 150,
     justifyContent: 'center',
   },
-
-  // cardImage2: {
-  //   width: 100,
-  //   height: 100,
-  //   justifyContent: 'center',
-  // },
   cardContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
