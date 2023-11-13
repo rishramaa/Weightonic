@@ -10,6 +10,7 @@ import {
 import React, {useState} from 'react';
 import {fontType, colors} from '../assets/theme';
 import {backgroundColors} from '../../data';
+import {useNavigation} from '@react-navigation/native';
 
 const ListQL = ({item}) => {
   const [bookmark, setBookmark] = useState([]);

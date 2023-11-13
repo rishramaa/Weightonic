@@ -147,12 +147,12 @@ const recent = StyleSheet.create({
     borderRadius: 10,
     borderColor: colors.grey(0.15),
     borderWidth: 1,
-    backgroundColor: colors.grey(0.03),
+    backgroundColor: '#7A9D54',
   },
   label: {
     fontSize: 12,
     fontFamily: fontType['Pjs-Medium'],
-    color: 'black',
+    color: 'white',
   },
   text: {
     fontSize: 14,

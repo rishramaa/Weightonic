@@ -22,6 +22,7 @@ import {
   Pencil,
 } from 'iconsax-react-native';
 import {fontType, colors} from '../../assets/theme';
+import {useNavigation} from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useState} from 'react';
 import {Element3} from 'iconsax-react-native';
@@ -39,25 +40,28 @@ const windowWidth = Dimensions.get('window').width;
 export default function Home() {
   const handleButtonPress = () => {};
   const [searchText, setSearchText] = useState('');
+  const navigation = useNavigation();
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.Searchbarcontainer}>
-          {/* Add the search bar */}
-          <SearchNormal color="#F5F7F8" variant="Linear" size={24} />
-          <TextInput
-            style={styles.searchBar}
-            placeholder="Search"
-            value={searchText}
-            onChangeText={setSearchText}
-          />
+    <TouchableOpacity style={itemHorizontal.cardItem}>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <View style={styles.Searchbarcontainer}>
+            {/* Add the search bar */}
+            <SearchNormal color="#F5F7F8" variant="Linear" size={24} />
+            <TextInput
+              style={styles.searchBar}
+              placeholder="Search"
+              value={searchText}
+              onChangeText={setSearchText}
+            />
+          </View>
+          <Text style={styles.titleweightonic}>WEIGHTONIC</Text>
         </View>
-        <Text style={styles.titleweightonic}>WEIGHTONIC</Text>
+        <View style={styles.listCategory}></View>
+        <ListBlog />
       </View>
-      <View style={styles.listCategory}></View>
-      <ListBlog />
-    </View>
+    </TouchableOpacity>
   );
 }
 

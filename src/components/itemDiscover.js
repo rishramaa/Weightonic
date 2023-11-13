@@ -6,19 +6,25 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 import React, {useState} from 'react';
 import {fontType, colors} from '../assets/theme';
 const ItemDiscover = ({item, variant, onPress}) => {
+  const navigation = useNavigation();
   return (
-    <View style={itemHorizontal.listCard}>
-      <View style={itemHorizontal.cardItem1}>
-        <Image style={itemHorizontal.cardImage} source={{uri: item.image}} />
+    <TouchableOpacity
+      style={itemHorizontal.cardItem}
+      onPress={() => navigation.navigate('DiscoverDetail', {blogId: item.id})}>
+      <View style={itemHorizontal.listCard}>
+        <View style={itemHorizontal.cardItem1}>
+          <Image style={itemHorizontal.cardImage} source={{uri: item.image}} />
+        </View>
+        <View style={{gap: 5, height: 'auto'}}>
+          <Text style={itemHorizontal.cardCategory}>{item.title}</Text>
+          <Text style={itemHorizontal.cardTitle}>{item.description}</Text>
+        </View>
       </View>
-      <View style={{gap: 5, height: 'auto'}}>
-        <Text style={itemHorizontal.cardCategory}>{item.title}</Text>
-        <Text style={itemHorizontal.cardTitle}>{item.description}</Text>
-      </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 const ListToday = ({data}) => {

@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import React, {useState} from 'react';
 import {fontType, colors} from '../assets/theme';
+import {useNavigation} from '@react-navigation/native';
 
 const ListHorizontal = ({item}) => {
   const [bookmark, setBookmark] = useState([]);
