@@ -4,8 +4,9 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
+  Animated,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import {
   ArrowLeft,
   Like1,
@@ -19,7 +20,18 @@ import {HealtyEatingList} from '../../../data';
 import FastImage from 'react-native-fast-image';
 import {fontType, colors} from '../../assets/theme';
 //
+
 const DiscoverDetail = ({route}) => {
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const diffClampY = Animated.diffClamp(scrollY, 0, 52);
+  const headerY = diffClampY.interpolate({
+    inputRange: [0, 52],
+    outputRange: [0, -52],
+  });
+  const bottomBarY = diffClampY.interpolate({
+    inputRange: [0, 52],
+    outputRange: [0, 52],
+  });
   const {blogId} = route.params;
   const [iconStates, setIconStates] = useState({
     liked: {variant: 'Linear', color: colors.grey(0.6)},
@@ -40,22 +52,19 @@ const DiscoverDetail = ({route}) => {
     }));
   };
   return (
-    <View style={styles.container}>
+    <Animated.View
+      style={[styles.container, {transform: [{translateY: headerY}]}]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <ArrowLeft color={colors.grey(0.6)} variant="Linear" size={24} />
+          <ArrowLeft color={colors.white(1)} variant="Linear" size={24} />
         </TouchableOpacity>
-        <View style={{flexDirection: 'row', justifyContent: 'center', gap: 20}}>
-          <Share color={colors.grey(0.6)} variant="Linear" size={24} />
-          <More
-            color={colors.grey(0.6)}
-            variant="Linear"
-            style={{transform: [{rotate: '90deg'}]}}
-          />
-        </View>
       </View>
-      <ScrollView
+      <Animated.ScrollView
         showsVerticalScrollIndicator={false}
+        onScroll={Animated.event(
+          [{nativeEvent: {contentOffset: {y: scrollY}}}],
+          {useNativeDriver: true},
+        )}
         contentContainerStyle={{
           paddingHorizontal: 24,
           paddingTop: 62,
@@ -90,19 +99,38 @@ const DiscoverDetail = ({route}) => {
           (baked or broiled): 25 g {'\n'}6. Halibut (cooked, dry heat): 23 g{' '}
           {'\n'}7. Tilapia (cooked, dry heat): 26 g
         </Text>
-      </ScrollView>
-      <View style={styles.bottomBar}>
-        <View style={{flexDirection: 'row', gap: 5, alignItems: 'center'}}>
-          <TouchableOpacity onPress={() => toggleIcon('liked')}>
-            <Like1
-              color={iconStates.liked.color}
-              variant={iconStates.liked.variant}
-              size={24}
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
-    </View>
+        <Text style={styles.text}>
+          High protein consumption is often emphasized in dietary strategies for
+          various reasons, primarily due to its crucial role in supporting
+          overall health and fitness goals. Proteins are essential
+          macronutrients composed of amino acids, which serve as the building
+          blocks for various tissues in the body. Incorporating a high-protein
+          diet can contribute to muscle repair and growth, making it
+          particularly beneficial for individuals engaged in regular exercise or
+          strength training. Additionally, protein-rich foods promote satiety,
+          helping to control appetite and manage weight. Beyond its role in
+          muscle health, adequate protein intake is vital for the proper
+          functioning of enzymes, hormones, and the immune system. Common
+          sources of high-quality protein include lean meats, fish, eggs, dairy
+          products, legumes, and plant-based sources like tofu and quinoa. While
+          the optimal amount of protein varies based on individual factors such
+          as age, activity level, and health goals, a well-balanced diet that
+          includes sufficient protein can be a key component of a healthy and
+          sustainable nutritional plan.
+        </Text>
+        <Text style={styles.text}>
+          Moreover, a high-protein diet has been associated with increased
+          thermogenesis, meaning the body burns more calories during digestion
+          compared to fats and carbohydrates. This phenomenon can be
+          advantageous for those seeking weight management or fat loss. Protein
+          also plays a crucial role in preserving lean body mass during periods
+          of calorie restriction, ensuring that weight loss comes primarily from
+          fat rather than muscle tissue. The macronutrient's impact on metabolic
+          rate and muscle preservation makes it a valuable component of various
+          weight loss and body recomposition strategies.
+        </Text>
+      </Animated.ScrollView>
+    </Animated.View>
   );
 };
 export default DiscoverDetail;
@@ -124,7 +152,7 @@ const styles = StyleSheet.create({
     top: 0,
     right: 0,
     left: 0,
-    backgroundColor: colors.white(),
+    backgroundColor: '#A8DF8E',
   },
   bottomBar: {
     position: 'absolute',
