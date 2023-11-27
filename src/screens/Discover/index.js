@@ -5,7 +5,9 @@ import {
   ScrollView,
   FlatList,
   TextInput,
+  TouchableOpacity,
 } from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 import React, {useState} from 'react';
 import {
   BlogList,
@@ -16,8 +18,9 @@ import {
   TodayList,
 } from '../../../data';
 import {ListDiscover} from '../../components';
-import {SearchNormal, SearchNormal1} from 'iconsax-react-native';
+import {Add, Edit, SearchNormal, SearchNormal1} from 'iconsax-react-native';
 import {fontType, colors} from '../../assets/theme';
+import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 
 const data = [
   {id: 1, label: 'Breakfast'},
@@ -51,28 +54,33 @@ const FlatListRecent = () => {
   );
 };
 const Discover = () => {
+  const navigation = useNavigation();
   const [searchText, setSearchText] = useState('');
   return (
-    <View style={styles.container}>
+    <View
+      style={styles.container}
+      onPress={() => navigation.navigate('SearchPage')}>
       <View style={styles.header}>
         <Text style={recent.textheader}>Discover</Text>
       </View>
-      <View style={styles.Searchbarcontainer}>
-        {/* Add the search bar */}
-        <SearchNormal
-          color={'black'}
-          variant="Linear"
-          size={24}
-          style={{marginLeft: 10}}
-        />
-        <TextInput
-          style={styles.searchBar}
-          placeholder="Search"
-          placeholderTextColor={'grey'}
-          value={searchText}
-          onChangeText={setSearchText}
-        />
-      </View>
+      <TouchableWithoutFeedback>
+        <View style={styles.Searchbarcontainer}>
+          {/* Add the search bar */}
+          <SearchNormal
+            color={'black'}
+            variant="Linear"
+            size={24}
+            style={{marginLeft: 10}}
+          />
+          <TextInput
+            style={styles.searchBar}
+            placeholder="Search"
+            placeholderTextColor={'grey'}
+            value={searchText}
+            onChangeText={setSearchText}
+          />
+        </View>
+      </TouchableWithoutFeedback>
       <View>
         <Text style={recent.text}>Categories</Text>
         <FlatListRecent />
@@ -85,6 +93,11 @@ const Discover = () => {
         <Text style={recent.text}>Pick Your Favorite</Text>
         <ListDiscover data={FavoriteList} />
       </ScrollView>
+      <TouchableOpacity
+        style={styles.floatingButton}
+        onPress={() => navigation.navigate('AddDiscover')}>
+        <Add color={colors.white()} variant="Linear" size={20} />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -138,6 +151,23 @@ const styles = StyleSheet.create({
     fontFamily: fontType['Pjs-Medium'],
     color: colors.grey(0.5),
     lineHeight: 18,
+  },
+  floatingButton: {
+    backgroundColor: '#A8DF8E',
+    padding: 15,
+    position: 'absolute',
+    bottom: 100,
+    right: 24,
+    borderRadius: 10,
+    shadowColor: colors.blue(),
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
+
+    elevation: 8,
   },
 });
 const recent = StyleSheet.create({

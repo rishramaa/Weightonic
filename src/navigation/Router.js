@@ -1,6 +1,7 @@
 import React from 'react';
 import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+
 import {
   Home,
   Discover,
@@ -8,6 +9,8 @@ import {
   Profile,
   ArticlesDetail,
   DiscoverDetail,
+  Search,
+  AddDiscoverForm,
 } from '../screens';
 import {
   Home2,
@@ -20,6 +23,7 @@ import {fontType, colors} from '../assets/theme';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+
 function MainApp() {
   return (
     <Tab.Navigator
@@ -115,6 +119,26 @@ const Router = () => {
       <Stack.Screen
         name="DiscoverDetail"
         component={DiscoverDetail}
+        options={{
+          headerShown: false,
+          animationEnabled: true,
+          animationTypeForReplace: 'pop',
+          gestureEnabled: true,
+          gestureDirection: 'horizontal',
+          ...TransitionPresets.SlideFromRightIOS,
+        }}
+      />
+      <Stack.Screen
+        name="SearchPage"
+        component={Search}
+        options={{
+          headerShown: false,
+          presentation: 'transparentModal',
+        }}
+      />
+      <Stack.Screen
+        name="AddDiscover"
+        component={AddDiscoverForm}
         options={{
           headerShown: false,
           animationEnabled: true,

@@ -7,6 +7,8 @@ import {
   TextInput,
 } from 'react-native';
 import React, {useState} from 'react';
+import {Setting2, Edit} from 'iconsax-react-native';
+import {useNavigation} from '@react-navigation/native';
 import {
   BlogList,
   CalorieCounterList,
@@ -23,6 +25,7 @@ import {SearchNormal, SearchNormal1} from 'iconsax-react-native';
 import {fontType, colors} from '../../assets/theme';
 
 const Articles = () => {
+  const navigation = useNavigation();
   const [searchText, setSearchText] = useState('');
   return (
     <View style={styles.container}>
@@ -37,6 +40,11 @@ const Articles = () => {
         <Text style={recent.text}>Healthy Lifestyle</Text>
         <ListArticles data={LifestyleList} />
       </ScrollView>
+      <TouchableOpacity
+        style={styles.floatingButton}
+        onPress={() => navigation.navigate('AddBlog')}>
+        <Edit color={colors.white()} variant="Linear" size={20} />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -88,6 +96,23 @@ const styles = StyleSheet.create({
     fontFamily: fontType['Pjs-Medium'],
     color: colors.grey(0.5),
     lineHeight: 18,
+  },
+  floatingButton: {
+    backgroundColor: colors.blue(),
+    padding: 15,
+    position: 'absolute',
+    bottom: 24,
+    right: 24,
+    borderRadius: 10,
+    shadowColor: colors.blue(),
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
+
+    elevation: 8,
   },
 });
 const recent = StyleSheet.create({
