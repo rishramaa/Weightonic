@@ -6,6 +6,7 @@ import {
   FlatList,
   TextInput,
   TouchableOpacity,
+  Image,
   ActivityIndicator,
   RefreshControl,
 } from 'react-native';
@@ -17,12 +18,16 @@ import {
   FavoriteList,
   HealtyEatingList,
   MakananSehatList,
+  PostResult,
   TodayList,
 } from '../../../data';
-import {ItemDiscover, ListDiscover} from '../../components';
+import {ItemPost} from '../../components';
+import {PostData, ProfileData} from '../../../data';
 import {Add, Edit, SearchNormal, SearchNormal1} from 'iconsax-react-native';
 import {fontType, colors} from '../../assets/theme';
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
+import FastImage from 'react-native-fast-image';
+import {formatNumber} from '../../utils/formatNumber';
 import axios from 'axios';
 
 const data = [
@@ -56,7 +61,7 @@ const FlatListRecent = () => {
     />
   );
 };
-const Discover = () => {
+const Post = () => {
   const navigation = useNavigation();
   const [searchText, setSearchText] = useState('');
   const [loading, setLoading] = useState(true);
@@ -65,7 +70,7 @@ const Discover = () => {
   const getDataBlog = async () => {
     try {
       const response = await axios.get(
-        'https://656c578ae1e03bfd572e3520.mockapi.io/weightonic/discover',
+        'https://656c578ae1e03bfd572e3520.mockapi.io/weightonic/post',
       );
       setBlogData(response.data);
       setLoading(false);
@@ -73,7 +78,6 @@ const Discover = () => {
       console.error(error);
     }
   };
-
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     setTimeout(() => {
@@ -92,62 +96,54 @@ const Discover = () => {
       style={styles.container}
       onPress={() => navigation.navigate('SearchPage')}>
       <View style={styles.header}>
-        <Text style={recent.textheader}>Discover</Text>
-      </View>
-      <TouchableWithoutFeedback>
-        <View style={styles.Searchbarcontainer}>
-          {/* Add the search bar */}
-          <SearchNormal
-            color={'black'}
-            variant="Linear"
-            size={24}
-            style={{marginLeft: 10}}
-          />
-          <TextInput
-            style={styles.searchBar}
-            placeholder="Search"
-            placeholderTextColor={'grey'}
-            value={searchText}
-            onChangeText={setSearchText}
-          />
-        </View>
-      </TouchableWithoutFeedback>
-      <View>
-        <Text style={recent.text}>Categories</Text>
-        <FlatListRecent />
+        <Text style={recent.textheader}>Post</Text>
       </View>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingBottom: 80,
-        }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }>
-        <Text style={recent.text}>Healty Eating</Text>
-        <ListDiscover data={HealtyEatingList} />
-        {/* <Text style={recent.text}>Calorie Counters</Text>
-        <ListDiscover data={CalorieCounterList} />
-        <Text style={recent.text}>Pick Your Favorite</Text>
-        <ListDiscover data={FavoriteList} /> */}
-        <Text style={recent.text}>New Post</Text>
-        {loading ? (
-          <ActivityIndicator size={'large'} color={'#7A9D54'} />
-        ) : (
-          blogData.map((item, index) => (
-            <ItemDiscover item={item} key={index} />
-          ))
-        )}
+        <TouchableWithoutFeedback>
+          <View style={styles.Searchbarcontainer}>
+            {/* Add the search bar */}
+            <View style={{gap: 15, alignItems: 'left'}}>
+              <FastImage
+                style={profile.pic}
+                source={{
+                  uri: ProfileData.profilePict,
+                  headers: {Authorization: 'someAuthToken'},
+                  priority: FastImage.priority.high,
+                }}
+                resizeMode={FastImage.resizeMode.cover}
+              />
+            </View>
+            <TextInput
+              style={styles.searchBar}
+              placeholder="Whats's on your mind?"
+              placeholderTextColor={'grey'}
+              value={searchText}
+              onChangeText={setSearchText}
+            />
+          </View>
+        </TouchableWithoutFeedback>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Text style={recent.text}>Latest Post</Text>
+          {loading ? (
+            <ActivityIndicator size={'large'} color={colors.blue()} />
+          ) : (
+            blogData.map((item, index) => <ItemPost item={item} key={index} />)
+          )}
+        </ScrollView>
       </ScrollView>
       <TouchableOpacity
         style={styles.floatingButton}
-        onPress={() => navigation.navigate('AddDiscover')}>
+        onPress={() => navigation.navigate('AddPost')}>
         <Add color={colors.white()} variant="Linear" size={20} />
       </TouchableOpacity>
     </View>
   );
 };
-export default Discover;
+export default Post;
 const styles = StyleSheet.create({
   Searchbarcontainer: {
     marginTop: 10,
@@ -155,7 +151,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: '#cfd4d1',
+    borderColor: '#A8DF8E',
     borderRadius: 50,
     width: 'auto',
     height: 50,
@@ -176,7 +172,7 @@ const styles = StyleSheet.create({
   header: {
     gap: 30,
     flexDirection: 'row',
-    alignItems: 'center',
+    alignIBOtems: 'center',
     height: 52,
     elevation: 8,
     paddingTop: 8,
@@ -214,6 +210,41 @@ const styles = StyleSheet.create({
     shadowRadius: 4.65,
 
     elevation: 8,
+  },
+});
+const profile = StyleSheet.create({
+  pic: {width: 50, height: 50, borderRadius: 50},
+  name: {
+    color: colors.black(),
+    fontSize: 20,
+    fontFamily: fontType['Pjs-Bold'],
+    textTransform: 'capitalize',
+  },
+  info: {
+    fontSize: 12,
+    fontFamily: fontType['Pjs-Regular'],
+    color: colors.grey(),
+  },
+  sum: {
+    fontSize: 16,
+    fontFamily: fontType['Pjs-SemiBold'],
+    color: colors.black(),
+  },
+  tag: {
+    fontSize: 14,
+    fontFamily: fontType['Pjs-Regular'],
+    color: colors.grey(0.5),
+  },
+  buttonEdit: {
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    backgroundColor: colors.grey(0.1),
+    borderRadius: 10,
+  },
+  buttonText: {
+    fontSize: 14,
+    fontFamily: fontType['Pjs-SemiBold'],
+    color: colors.black(),
   },
 });
 const recent = StyleSheet.create({

@@ -11,6 +11,10 @@ import {
   DiscoverDetail,
   Search,
   AddDiscoverForm,
+  Post,
+  AddPostForm,
+  PostDetail,
+  EditPostForm,
 } from '../screens';
 import {
   Home2,
@@ -18,6 +22,7 @@ import {
   Book,
   Receipt21,
   ProfileCircle,
+  Add,
 } from 'iconsax-react-native';
 import {fontType, colors} from '../assets/theme';
 
@@ -79,6 +84,22 @@ function MainApp() {
       />
 
       <Tab.Screen
+        name="Post"
+        component={Post}
+        options={{
+          tabBarLabel: 'Post',
+          tabBarIcon: ({focused, color}) => (
+            <Add
+              color={color}
+              variant={focused ? 'Bold' : 'Linear'}
+              size={24}
+            />
+          ),
+          headerShown: false,
+        }}
+      />
+
+      <Tab.Screen
         name="Articles"
         component={Articles}
         options={{
@@ -129,6 +150,18 @@ const Router = () => {
         }}
       />
       <Stack.Screen
+        name="PostDetail"
+        component={PostDetail}
+        options={{
+          headerShown: false,
+          animationEnabled: true,
+          animationTypeForReplace: 'pop',
+          gestureEnabled: true,
+          gestureDirection: 'horizontal',
+          ...TransitionPresets.SlideFromRightIOS,
+        }}
+      />
+      <Stack.Screen
         name="SearchPage"
         component={Search}
         options={{
@@ -139,6 +172,30 @@ const Router = () => {
       <Stack.Screen
         name="AddDiscover"
         component={AddDiscoverForm}
+        options={{
+          headerShown: false,
+          animationEnabled: true,
+          animationTypeForReplace: 'pop',
+          gestureEnabled: true,
+          gestureDirection: 'horizontal',
+          ...TransitionPresets.SlideFromRightIOS,
+        }}
+      />
+      <Stack.Screen
+        name="AddPost"
+        component={AddPostForm}
+        options={{
+          headerShown: false,
+          animationEnabled: true,
+          animationTypeForReplace: 'pop',
+          gestureEnabled: true,
+          gestureDirection: 'horizontal',
+          ...TransitionPresets.SlideFromRightIOS,
+        }}
+      />
+      <Stack.Screen
+        name="EditPost"
+        component={EditPostForm}
         options={{
           headerShown: false,
           animationEnabled: true,

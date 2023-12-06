@@ -5,6 +5,7 @@ import ListDiscover from './itemDiscover';
 import ListArticles from './ItemArticles';
 import ItemBookmark from './ItemBookmark';
 import SearchBar from './SearchBar';
+import ItemPost from './itemPost';
 export {
   ListHorizontal,
   ListQL,
@@ -13,4 +14,5 @@ export {
   ItemBookmark,
   ListArticles,
   SearchBar,
+  ItemPost,
 };

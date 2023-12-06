@@ -13,7 +13,14 @@ import {useNavigation} from '@react-navigation/native';
 import {fontType, colors} from '../../assets/theme';
 import axios from 'axios';
 
-const AddDiscoverForm = () => {
+const AddPostForm = () => {
+  const dataCategory = [
+    {id: 1, name: 'Breakfast'},
+    {id: 2, name: 'Lunch'},
+    {id: 3, name: 'Dinner'},
+    {id: 4, name: 'Drinks'},
+    {id: 5, name: 'Cookies'},
+  ];
   const [blogData, setBlogData] = useState({
     title: '',
     description: '',
@@ -25,23 +32,16 @@ const AddDiscoverForm = () => {
       [key]: value,
     });
   };
-  const [image, setImage] = useState(null);
-  const navigation = useNavigation();
-  const [loading, setLoading] = useState(false);
-
   const handleUpload = async () => {
     setLoading(true);
     try {
       await axios
-        .post(
-          'https://656c578ae1e03bfd572e3520.mockapi.io/weightonic/discover',
-          {
-            title: blogData.title,
-            description: blogData.description,
-            content: blogData.content,
-            image,
-          },
-        )
+        .post('https://656c578ae1e03bfd572e3520.mockapi.io/weightonic/post', {
+          title: blogData.title,
+          description: blogData.description,
+          content: blogData.content,
+          image,
+        })
         .then(function (response) {
           console.log(response);
         })
@@ -49,11 +49,14 @@ const AddDiscoverForm = () => {
           console.log(error);
         });
       setLoading(false);
-      navigation.navigate('Discover');
+      navigation.navigate('Post');
     } catch (e) {
       console.log(e);
     }
   };
+  const [image, setImage] = useState(null);
+  const navigation = useNavigation();
+  const [loading, setLoading] = useState(false);
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -61,7 +64,7 @@ const AddDiscoverForm = () => {
           <ArrowLeft color={colors.white()} variant="Linear" size={24} />
         </TouchableOpacity>
         <View style={{flex: 1, alignItems: 'center'}}>
-          <Text style={styles.title}>Add Discover</Text>
+          <Text style={styles.title}>Add Post</Text>
         </View>
       </View>
       <ScrollView
@@ -112,19 +115,29 @@ const AddDiscoverForm = () => {
         <TouchableOpacity style={styles.button} onPress={handleUpload}>
           <Text style={styles.buttonLabel}>Upload</Text>
         </TouchableOpacity>
+        {loading && (
+          <View style={styles.loadingOverlay}>
+            <ActivityIndicator size="large" color={colors.blue()} />
+          </View>
+        )}
       </ScrollView>
-      {loading && (
-        <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color={'#A8DF8E'} />
-        </View>
-      )}
     </View>
   );
 };
 
-export default AddDiscoverForm;
+export default AddPostForm;
 
 const styles = StyleSheet.create({
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: colors.black(0.4),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   container: {
     flex: 1,
     backgroundColor: colors.white(),
@@ -171,16 +184,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: fontType['Pjs-SemiBold'],
     color: colors.white(),
-  },
-  loadingOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: colors.black(0.4),
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });
 const textInput = StyleSheet.create({

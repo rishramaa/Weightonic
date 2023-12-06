@@ -23,6 +23,7 @@ import {
 import {ListArticles} from '../../components';
 import {SearchNormal, SearchNormal1} from 'iconsax-react-native';
 import {fontType, colors} from '../../assets/theme';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const Articles = () => {
   const navigation = useNavigation();

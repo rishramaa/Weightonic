@@ -5,6 +5,10 @@ import ArticlesDetail from './ArticlesDetail';
 import DiscoverDetail from './DiscoverDetail';
 import Search from './Search';
 import AddDiscoverForm from './AddDiscoverForm';
+import Post from './Post';
+import PostDetail from './PostDetail';
+import AddPostForm from './AddPostForm';
+import EditPostForm from './EditPostForm';
 export {
   Home,
   Discover,
@@ -13,4 +17,8 @@ export {
   DiscoverDetail,
   Search,
   AddDiscoverForm,
+  Post,
+  PostDetail,
+  AddPostForm,
+  EditPostForm,
 };

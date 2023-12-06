@@ -8,69 +8,78 @@ import {
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import React, {useState} from 'react';
+import FastImage from 'react-native-fast-image';
+import {formatDate} from '../utils/formatDate';
 import {fontType, colors} from '../assets/theme';
-const ItemDiscover = ({item, variant, onPress}) => {
+
+const ItemPost = ({item, variant, onPress}) => {
   const navigation = useNavigation();
   return (
     <TouchableOpacity
       style={itemHorizontal.cardItem}
-      onPress={() => navigation.navigate('DiscoverDetail', {blogId: item?.id})}>
-      <View
-        style={{
-          flexDirection: 'row',
-          gap: 30,
-        }}>
-        <View style={itemHorizontal.listCard}>
-          <View style={itemHorizontal.cardItem1}>
-            <Image
-              style={itemHorizontal.cardImage}
-              source={{uri: item?.image}}
-            />
-          </View>
-          <View style={{gap: 5, height: 'auto'}}>
-            <Text style={itemHorizontal.cardCategory}>{item?.title}</Text>
-            <Text style={itemHorizontal.cardTitle}>{item?.description}</Text>
-          </View>
+      onPress={() => navigation.navigate('PostDetail', {blogId: item.id})}>
+      <View style={itemHorizontal.listCard}>
+        <View style={itemHorizontal.borderpost}>
+          <Image style={itemHorizontal.cardImage} source={{uri: item?.image}} />
+        </View>
+        <View style={{gap: 5, height: 'auto'}}>
+          <Text style={itemHorizontal.cardCategory}>{item?.title}</Text>
+          <Text style={itemHorizontal.cardTitle}>{item?.description}</Text>
         </View>
       </View>
     </TouchableOpacity>
   );
 };
-// const ListToday = ({data}) => {
-//   const [bookmark, setBookmark] = useState([]);
-//   const toggleBookmark = itemId => {
-//     if (bookmark.includes(itemId)) {
-//       setBookmark(bookmark.filter(id => id !== itemId));
-//     } else {
-//       setBookmark([...bookmark, itemId]);
-//     }
-//   };
-//   const renderItem = ({item}) => {
-//     variant = bookmark.includes(item.id) ? 'Bold' : 'Linear';
-//     return (
-//       <ItemDiscover
-//         item={item}
-//         variant={variant}
-//         onPress={() => toggleBookmark(item.id)}
-//       />
-//     );
-//   };
-//   return (
-//     <FlatList
-//       data={data}
-//       keyExtractor={item => item.id}
-//       renderItem={item => renderItem({...item})}
-//       ItemSeparatorComponent={() => <View style={{width: 0}} />}
-//       horizontal
-//       showsHorizontalScrollIndicator={false}
-//     />
-//   );
-// };
-export default ItemDiscover;
+const ListToday = ({data}) => {
+  const [bookmark, setBookmark] = useState([]);
+  const toggleBookmark = itemId => {
+    if (bookmark.includes(itemId)) {
+      setBookmark(bookmark.filter(id => id !== itemId));
+    } else {
+      setBookmark([...bookmark, itemId]);
+    }
+  };
+  const renderItem = ({item}) => {
+    variant = bookmark.includes(item.id) ? 'Bold' : 'Linear';
+    return (
+      <ItemPost
+        item={item}
+        variant={variant}
+        onPress={() => toggleBookmark(item.id)}
+      />
+    );
+  };
+  return (
+    <FlatList
+      data={data}
+      keyExtractor={item => item.id}
+      renderItem={item => renderItem({...item})}
+      ItemSeparatorComponent={() => <View style={{width: 0}} />}
+      horizontal
+      showsHorizontalScrollIndicator={false}
+    />
+  );
+};
+export default ItemPost;
 const itemHorizontal = StyleSheet.create({
   listCard: {
     paddingHorizontal: 24,
     paddingVertical: 10,
+  },
+  // borderpost: {
+  //   paddingLeft: 40,
+  //   alignItems: 'center',
+  //   paddingVertical: 10,
+  //   borderRadius: 10,
+  //   borderColor: colors.grey(0.15),
+  //   width: 350,
+  //   height: 300,
+  //   backgroundColor: '#7A9D54',
+  // },
+  cardItem1: {
+    backgroundColor: colors.black(0.03),
+    borderRadius: 15,
+    borderColor: '#A8DF8E',
   },
   cardCategory: {
     marginTop: 10,
@@ -90,7 +99,7 @@ const itemHorizontal = StyleSheet.create({
     color: colors.blue(0.6),
   },
   cardImage: {
-    width: 200,
+    width: 350,
     height: 200,
     backgroundColor: '#A8DF8E',
     borderRadius: 10,
@@ -106,6 +115,7 @@ const itemHorizontal = StyleSheet.create({
   cardContent: {
     justifyContent: 'space-between',
     flex: 1,
+    borderColor: '#32a852',
   },
 });
 

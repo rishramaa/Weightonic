@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -13,7 +13,8 @@ import {useNavigation} from '@react-navigation/native';
 import {fontType, colors} from '../../assets/theme';
 import axios from 'axios';
 
-const AddDiscoverForm = () => {
+const EditPostForm = ({route}) => {
+  const {blogId} = route.params;
   const [blogData, setBlogData] = useState({
     title: '',
     description: '',
@@ -27,14 +28,33 @@ const AddDiscoverForm = () => {
   };
   const [image, setImage] = useState(null);
   const navigation = useNavigation();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    getBlogById();
+  }, [blogId]);
 
+  const getBlogById = async () => {
+    try {
+      const response = await axios.get(
+        `https://656c578ae1e03bfd572e3520.mockapi.io/weightonic/post/${blogId}`,
+      );
+      setBlogData({
+        title: response.data.title,
+        description: response.data.description,
+        content: response.data.content,
+      });
+      setImage(response.data.image);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   const handleUpload = async () => {
     setLoading(true);
     try {
       await axios
-        .post(
-          'https://656c578ae1e03bfd572e3520.mockapi.io/weightonic/discover',
+        .put(
+          `https://656c578ae1e03bfd572e3520.mockapi.io/weightonic/post/${blogId}`,
           {
             title: blogData.title,
             description: blogData.description,
@@ -49,7 +69,7 @@ const AddDiscoverForm = () => {
           console.log(error);
         });
       setLoading(false);
-      navigation.navigate('Discover');
+      navigation.navigate('Post');
     } catch (e) {
       console.log(e);
     }
@@ -61,7 +81,7 @@ const AddDiscoverForm = () => {
           <ArrowLeft color={colors.white()} variant="Linear" size={24} />
         </TouchableOpacity>
         <View style={{flex: 1, alignItems: 'center'}}>
-          <Text style={styles.title}>Add Discover</Text>
+          <Text style={styles.title}>Edit Post</Text>
         </View>
       </View>
       <ScrollView
@@ -110,21 +130,31 @@ const AddDiscoverForm = () => {
           />
         </View>
         <TouchableOpacity style={styles.button} onPress={handleUpload}>
-          <Text style={styles.buttonLabel}>Upload</Text>
+          <Text style={styles.buttonLabel}>Update</Text>
         </TouchableOpacity>
+        {loading && (
+          <View style={styles.loadingOverlay}>
+            <ActivityIndicator size="large" color={colors.blue()} />
+          </View>
+        )}
       </ScrollView>
-      {loading && (
-        <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color={'#A8DF8E'} />
-        </View>
-      )}
     </View>
   );
 };
 
-export default AddDiscoverForm;
+export default EditPostForm;
 
 const styles = StyleSheet.create({
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: colors.black(0.4),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   container: {
     flex: 1,
     backgroundColor: colors.white(),
@@ -172,16 +202,6 @@ const styles = StyleSheet.create({
     fontFamily: fontType['Pjs-SemiBold'],
     color: colors.white(),
   },
-  loadingOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: colors.black(0.4),
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
 });
 const textInput = StyleSheet.create({
   borderDashed: {
@@ -198,8 +218,8 @@ const textInput = StyleSheet.create({
     padding: 0,
   },
   description: {
-    fontSize: 12,
-    fontFamily: fontType['Pjs-Regular'],
+    fontSize: 16,
+    fontFamily: fontType['Pjs-SemiBold'],
     color: colors.black(),
     padding: 0,
   },
