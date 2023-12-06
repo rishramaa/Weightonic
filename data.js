@@ -62,6 +62,17 @@ export const WorkoutList = [
   },
 ];
 
+export const PostResult = {
+  profilePict:
+    'https://media.licdn.com/dms/image/C4D03AQEVQpEid2SKHA/profile-displayphoto-shrink_800_800/0/1654877082305?e=1707350400&v=beta&t=gqpIcyk__mhgnolPcnVek2axUxNXdZJ8cQ6jrVR7L2w',
+  name: 'Farish',
+};
+
+export const ProfileData = {
+  profilePict:
+    'https://media.licdn.com/dms/image/C4D03AQEVQpEid2SKHA/profile-displayphoto-shrink_800_800/0/1654877082305?e=1707350400&v=beta&t=gqpIcyk__mhgnolPcnVek2axUxNXdZJ8cQ6jrVR7L2w',
+};
+
 export const dataQL = [
   {
     id: '1',
