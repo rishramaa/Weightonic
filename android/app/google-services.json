@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "597619209617",
+    "project_id": "weightonicapp",
+    "storage_bucket": "weightonicapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:597619209617:android:711d2d07d3666d70b85630",
+        "android_client_info": {
+          "package_name": "com.weightonic"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDm6zlO18UEm-nTmJMYXf0yjMh7RKcKUbI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

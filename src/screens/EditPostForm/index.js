@@ -8,10 +8,13 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
-import {ArrowLeft} from 'iconsax-react-native';
+import {Add, AddSquare, ArrowLeft} from 'iconsax-react-native';
 import {useNavigation} from '@react-navigation/native';
 import {fontType, colors} from '../../assets/theme';
-import axios from 'axios';
+import ImagePicker from 'react-native-image-crop-picker';
+import storage from '@react-native-firebase/storage';
+import firestore from '@react-native-firebase/firestore';
+import FastImage from 'react-native-fast-image';
 
 const EditPostForm = ({route}) => {
   const {blogId} = route.params;
@@ -28,50 +31,75 @@ const EditPostForm = ({route}) => {
   };
   const [image, setImage] = useState(null);
   const navigation = useNavigation();
+  const [oldImage, setOldImage] = useState(null);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    getBlogById();
-  }, [blogId]);
-
-  const getBlogById = async () => {
-    try {
-      const response = await axios.get(
-        `https://656c578ae1e03bfd572e3520.mockapi.io/weightonic/post/${blogId}`,
-      );
-      setBlogData({
-        title: response.data.title,
-        description: response.data.description,
-        content: response.data.content,
-      });
-      setImage(response.data.image);
-      setLoading(false);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  const handleUpload = async () => {
-    setLoading(true);
-    try {
-      await axios
-        .put(
-          `https://656c578ae1e03bfd572e3520.mockapi.io/weightonic/post/${blogId}`,
-          {
+    const subscriber = firestore()
+      .collection('Post')
+      .doc(blogId)
+      .onSnapshot(documentSnapshot => {
+        const blogData = documentSnapshot.data();
+        if (blogData) {
+          console.log('Blog data: ', blogData);
+          setBlogData({
             title: blogData.title,
             description: blogData.description,
             content: blogData.content,
-            image,
-          },
-        )
-        .then(function (response) {
-          console.log(response);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+          });
+          setOldImage(blogData.image);
+          setImage(blogData.image);
+          setLoading(false);
+        } else {
+          console.log(`Blog with ID ${blogId} not found.`);
+        }
+      });
+    setLoading(false);
+    return () => subscriber();
+  }, [blogId]);
+
+  const handleImagePick = async () => {
+    ImagePicker.openPicker({
+      width: 1920,
+      height: 1080,
+      cropping: true,
+    })
+      .then(image => {
+        console.log(image);
+        setImage(image.path);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+
+  const handleUpdate = async () => {
+    setLoading(true);
+    let filename = image.substring(image.lastIndexOf('/') + 1);
+    const extension = filename.split('.').pop();
+    const name = filename.split('.').slice(0, -1).join('.');
+    filename = name + Date.now() + '.' + extension;
+    const reference = storage().ref(`blogimages/${filename}`);
+    try {
+      if (image !== oldImage && oldImage) {
+        const oldImageRef = storage().refFromURL(oldImage);
+        await oldImageRef.delete();
+      }
+      if (image !== oldImage) {
+        await reference.putFile(image);
+      }
+      const url =
+        image !== oldImage ? await reference.getDownloadURL() : oldImage;
+      await firestore().collection('Post').doc(blogId).update({
+        title: blogData.title,
+        description: blogData.description,
+        content: blogData.content,
+        image: url,
+      });
       setLoading(false);
-      navigation.navigate('Post');
-    } catch (e) {
-      console.log(e);
+      console.log('Blog Updated!');
+      navigation.navigate('PostDetail', {blogId});
+    } catch (error) {
+      console.log(error);
     }
   };
   return (
@@ -121,15 +149,64 @@ const EditPostForm = ({route}) => {
           />
         </View>
         <View style={[textInput.borderDashed]}>
-          <TextInput
-            placeholder="Image"
-            value={image}
-            onChangeText={text => setImage(text)}
-            placeholderTextColor={colors.grey(0.6)}
-            style={textInput.content}
-          />
+          {image ? (
+            <View style={{position: 'relative'}}>
+              <FastImage
+                style={{width: '100%', height: 127, borderRadius: 5}}
+                source={{
+                  uri: image,
+                  headers: {Authorization: 'someAuthToken'},
+                  priority: FastImage.priority.high,
+                }}
+                resizeMode={FastImage.resizeMode.cover}
+              />
+              <TouchableOpacity
+                style={{
+                  position: 'absolute',
+                  top: -5,
+                  right: -5,
+                  backgroundColor: colors.blue(),
+                  borderRadius: 25,
+                }}
+                onPress={() => setImage(null)}>
+                <Add
+                  size={20}
+                  variant="Linear"
+                  color={colors.white()}
+                  style={{transform: [{rotate: '45deg'}]}}
+                />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <TouchableOpacity onPress={handleImagePick}>
+              <View
+                style={[
+                  textInput.borderDashed,
+                  {
+                    gap: 10,
+                    paddingVertical: 30,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  },
+                ]}>
+                <AddSquare
+                  color={colors.grey(0.6)}
+                  variant="Linear"
+                  size={42}
+                />
+                <Text
+                  style={{
+                    fontFamily: fontType['Pjs-Regular'],
+                    fontSize: 12,
+                    color: colors.grey(0.6),
+                  }}>
+                  Upload Thumbnail
+                </Text>
+              </View>
+            </TouchableOpacity>
+          )}
         </View>
-        <TouchableOpacity style={styles.button} onPress={handleUpload}>
+        <TouchableOpacity style={styles.button} onPress={handleUpdate}>
           <Text style={styles.buttonLabel}>Update</Text>
         </TouchableOpacity>
         {loading && (

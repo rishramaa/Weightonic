@@ -11,7 +11,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
-import React, {useState, useCallback} from 'react';
+import React, {useState, useCallback, useEffect} from 'react';
 import {
   BlogList,
   CalorieCounterList,
@@ -27,8 +27,7 @@ import {Add, Edit, SearchNormal, SearchNormal1} from 'iconsax-react-native';
 import {fontType, colors} from '../../assets/theme';
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import FastImage from 'react-native-fast-image';
-import {formatNumber} from '../../utils/formatNumber';
-import axios from 'axios';
+import firestore from '@react-native-firebase/firestore';
 
 const data = [
   {id: 1, label: 'Breakfast'},
@@ -67,30 +66,41 @@ const Post = () => {
   const [loading, setLoading] = useState(true);
   const [blogData, setBlogData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-  const getDataBlog = async () => {
-    try {
-      const response = await axios.get(
-        'https://656c578ae1e03bfd572e3520.mockapi.io/weightonic/post',
-      );
-      setBlogData(response.data);
-      setLoading(false);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  useEffect(() => {
+    const subscriber = firestore()
+      .collection('Post')
+      .onSnapshot(querySnapshot => {
+        const blogs = [];
+        querySnapshot.forEach(documentSnapshot => {
+          blogs.push({
+            ...documentSnapshot.data(),
+            id: documentSnapshot.id,
+          });
+        });
+        setBlogData(blogs);
+        setLoading(false);
+      });
+    return () => subscriber();
+  }, []);
+
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     setTimeout(() => {
-      getDataBlog();
+      firestore()
+        .collection('Post')
+        .onSnapshot(querySnapshot => {
+          const blogs = [];
+          querySnapshot.forEach(documentSnapshot => {
+            blogs.push({
+              ...documentSnapshot.data(),
+              id: documentSnapshot.id,
+            });
+          });
+          setBlogData(blogs);
+        });
       setRefreshing(false);
     }, 1500);
   }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      getDataBlog();
-    }, []),
-  );
   return (
     <View
       style={styles.container}

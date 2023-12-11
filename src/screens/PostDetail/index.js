@@ -21,10 +21,9 @@ import {useNavigation} from '@react-navigation/native';
 import {HealtyEatingList} from '../../../data';
 import FastImage from 'react-native-fast-image';
 import {fontType, colors} from '../../assets/theme';
-import {formatNumber} from '../../utils/formatNumber';
-import {formatDate} from '../../utils/formatDate';
-import axios from 'axios';
 import ActionSheet from 'react-native-actions-sheet';
+import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 
 const PostDetail = ({route}) => {
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -56,37 +55,47 @@ const PostDetail = ({route}) => {
   };
 
   useEffect(() => {
-    getBlogById();
+    const subscriber = firestore()
+      .collection('Post')
+      .doc(blogId)
+      .onSnapshot(documentSnapshot => {
+        const blogData = documentSnapshot.data();
+        if (blogData) {
+          console.log('Blog data: ', blogData);
+          setSelectedBlog(blogData);
+        } else {
+          console.log(`Blog with ID ${blogId} not found.`);
+        }
+      });
+    setLoading(false);
+    return () => subscriber();
   }, [blogId]);
-
-  const getBlogById = async () => {
-    try {
-      const response = await axios.get(
-        `https://656c578ae1e03bfd572e3520.mockapi.io/weightonic/post/${blogId}`,
-      );
-      setSelectedBlog(response.data);
-      setLoading(false);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   const navigateEdit = () => {
     closeActionSheet();
     navigation.navigate('EditPost', {blogId});
   };
   const handleDelete = async () => {
-    await axios
-      .delete(
-        `https://656c578ae1e03bfd572e3520.mockapi.io/weightonic/post/${blogId}`,
-      )
-      .then(() => {
-        closeActionSheet();
-        navigation.navigate('Post');
-      })
-      .catch(error => {
-        console.error(error);
-      });
+    setLoading(true);
+    try {
+      await firestore()
+        .collection('Post')
+        .doc(blogId)
+        .delete()
+        .then(() => {
+          console.log('Blog deleted!');
+        });
+      if (selectedBlog?.image) {
+        const imageRef = storage().refFromURL(selectedBlog?.image);
+        await imageRef.delete();
+      }
+      console.log('Blog deleted!');
+      closeActionSheet();
+      setSelectedBlog(null);
+      setLoading(false);
+      navigation.navigate('Post');
+    } catch (error) {
+      console.error(error);
+    }
   };
   const navigation = useNavigation();
   const toggleIcon = iconName => {
