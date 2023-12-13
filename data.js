@@ -10,28 +10,28 @@ export const TodayList = [
     id: 2,
     title: 'A.M. Snack',
     description: '2 Slice Bread',
-    calories: '60 Calories',
+    calories: '60',
   },
 
   {
     id: 3,
     title: 'Lunch',
     description: 'Chicken Gordon Blue',
-    calories: '400 Calories',
+    calories: '400',
   },
 
   {
     id: 4,
     title: 'P.M. Snack',
     description: '1 Medium Apple',
-    calories: '40 Calories',
+    calories: '40',
   },
 
   {
     id: 5,
     title: 'Dinner',
     description: 'Seared Salmon',
-    calories: '450 Calories',
+    calories: '450',
   },
 ];
 

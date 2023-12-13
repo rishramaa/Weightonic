@@ -11,8 +11,14 @@ import React, {useState} from 'react';
 import FastImage from 'react-native-fast-image';
 import {formatDate} from '../utils/formatDate';
 import {fontType, colors} from '../assets/theme';
+import {Heart, Like, MessageAdd, Repeat} from 'iconsax-react-native';
 
 const ItemPost = ({item, variant, onPress}) => {
+  const [iconStates, setIconStates] = useState({
+    liked: {variant: 'Linear', color: colors.grey(0.6)},
+    bookmarked: {variant: 'Linear', color: colors.grey(0.6)},
+  });
+
   const navigation = useNavigation();
   return (
     <TouchableOpacity
@@ -25,11 +31,35 @@ const ItemPost = ({item, variant, onPress}) => {
         <View style={{gap: 5, height: 'auto'}}>
           <Text style={itemHorizontal.cardCategory}>{item?.title}</Text>
           <Text style={itemHorizontal.cardTitle}>{item?.description}</Text>
+          <View style={styles.iconContainer}>
+            <TouchableOpacity onPress={() => toggleIcon('bookmarked')}>
+              <MessageAdd
+                color={iconStates.bookmarked.color}
+                variant={iconStates.bookmarked.variant}
+                size={24}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => toggleIcon('bookmarked')}>
+              <Repeat
+                color={iconStates.bookmarked.color}
+                variant={iconStates.bookmarked.variant}
+                size={24}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => toggleIcon('bookmarked')}>
+              <Heart
+                color={iconStates.bookmarked.color}
+                variant={iconStates.bookmarked.variant}
+                size={24}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </TouchableOpacity>
   );
 };
+
 const ListToday = ({data}) => {
   const [bookmark, setBookmark] = useState([]);
   const toggleBookmark = itemId => {
@@ -61,21 +91,38 @@ const ListToday = ({data}) => {
   );
 };
 export default ItemPost;
+
 const itemHorizontal = StyleSheet.create({
   listCard: {
     paddingHorizontal: 24,
     paddingVertical: 10,
+    paddingTop: 16,
+    backgroundColor: '#FFFFFF', // Warna latar belakang item post
+    borderRadius: 10,
+    borderColor: '#A8DF8E',
+    borderWidth: 1,
+    marginBottom: 16,
+    marginLeft: 24,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-  // borderpost: {
-  //   paddingLeft: 40,
-  //   alignItems: 'center',
-  //   paddingVertical: 10,
-  //   borderRadius: 10,
-  //   borderColor: colors.grey(0.15),
-  //   width: 350,
-  //   height: 300,
-  //   backgroundColor: '#7A9D54',
-  // },
+  buttonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  likeButton: {
+    marginRight: 16,
+  },
+  commentButton: {
+    marginRight: 16,
+  },
+  shareButton: {},
   cardItem1: {
     backgroundColor: colors.black(0.03),
     borderRadius: 15,
@@ -141,6 +188,23 @@ const styles = StyleSheet.create({
     marginHorizontal: 30,
     marginLeft: 180,
   },
+  iconContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 10, // Sesuaikan dengan kebutuhan
+    borderWidth: 2,
+    borderRadius: 12, // Sesuaikan dengan setengah tinggi ikon untuk mendapatkan bentuk bulat
+    padding: 8,
+    borderColor: '#A8DF8E', // Warna border khusus untuk ikon
+  },
+  // iconWrapper: {
+  //   borderWidth: 2,
+  //   borderRadius: 12, // Sesuaikan dengan setengah tinggi ikon untuk mendapatkan bentuk bulat
+  //   padding: 8,
+  //   borderBlockStartColor: '#A8DF8E', // Warna border khusus untuk ikon
+  // },
+
   searchBar: {
     height: 40,
     paddingLeft: 10,

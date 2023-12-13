@@ -37,6 +37,8 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 5,
     margin: 8,
+    marginLeft: 25,
+    marginRight: 15,
   },
 
   cardImage: {

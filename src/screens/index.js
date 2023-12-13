@@ -9,6 +9,9 @@ import Post from './Post';
 import PostDetail from './PostDetail';
 import AddPostForm from './AddPostForm';
 import EditPostForm from './EditPostForm';
+import Login from './Login';
+import Register from './Register';
+import SplashScreen from './SplashScreen';
 export {
   Home,
   Discover,
@@ -21,4 +24,7 @@ export {
   PostDetail,
   AddPostForm,
   EditPostForm,
+  Login,
+  Register,
+  SplashScreen,
 };

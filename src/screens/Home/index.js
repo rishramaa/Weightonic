@@ -22,7 +22,6 @@ import {
   Pencil,
 } from 'iconsax-react-native';
 import {fontType, colors} from '../../assets/theme';
-import {useNavigation} from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useState} from 'react';
 import {Element3} from 'iconsax-react-native';
@@ -40,38 +39,110 @@ const windowWidth = Dimensions.get('window').width;
 export default function Home() {
   const handleButtonPress = () => {};
   const [searchText, setSearchText] = useState('');
-  const navigation = useNavigation();
 
   return (
-    <TouchableOpacity style={itemHorizontal.cardItem}>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <View style={styles.Searchbarcontainer}>
-            {/* Add the search bar */}
-            <SearchNormal color="#F5F7F8" variant="Linear" size={24} />
-            <TextInput
-              style={styles.searchBar}
-              placeholder="Search"
-              value={searchText}
-              onChangeText={setSearchText}
-            />
-          </View>
-          <Text style={styles.titleweightonic}>WEIGHTONIC</Text>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <View style={styles.Searchbarcontainer}>
+          {/* Add the search bar */}
+          <SearchNormal color="#F5F7F8" variant="Linear" size={24} />
+          <TextInput
+            style={styles.searchBar}
+            placeholder="Search"
+            value={searchText}
+            onChangeText={setSearchText}
+          />
         </View>
-        <View style={styles.listCategory}></View>
-        <ListBlog />
+        <Text style={styles.titleweightonic}>WEIGHTONIC</Text>
       </View>
-    </TouchableOpacity>
+      <View style={styles.listCategory}></View>
+      <ListBlog />
+    </View>
   );
 }
 
+const ListBlog = () => {
+  const handleButtonPress = () => {};
+  return (
+    <ScrollView style={{flex: 1}}>
+      <Text style={{...styles.title, paddingHorizontal: 24}}>Today</Text>
+      <ListToday data={TodayList} />
+      <Text style={{...styles.title, paddingHorizontal: 24}}>Quick Launch</Text>
+      <View style={styles.rowContainer}>
+        {dataQL.map((item, index) => (
+          <ListQL item={item} key={index} />
+        ))}
+      </View>
+      <Text style={{...styles.title, paddingHorizontal: 24}}>
+        Workout Routine
+      </Text>
+      {WorkoutList.map((item, index) => (
+        <ListHorizontal item={item} key={index} />
+      ))}
+
+      <Text style={{...styles.title, paddingHorizontal: 24}}>Learn</Text>
+      <ScrollView
+        showsHorizontalScrollIndicator={false}
+        horizontal
+        contentContainerStyle={{gap: 0}}>
+        <View style={itemHorizontal.listCard}>
+          <View
+            style={{
+              ...itemHorizontal2.cardItem,
+              backgroundColor: '#79AC78',
+              width: 150,
+              height: 150,
+            }}>
+            <ImageBackground
+              style={itemHorizontal2.cardImage}
+              resizeMode="cover"
+              imageStyle={{borderRadius: 15}}
+              source={{
+                uri: 'https://gcdnb.pbrd.co/images/7fE4eOuRTxt9.png?o=1',
+              }}>
+              <View style={itemHorizontal2.darkOverlay}></View>
+              <View style={itemHorizontal2.cardContent}>
+                <View style={itemHorizontal2.cardInfo}>
+                  <Text style={itemHorizontal2.cardTitle}>
+                    How to burn belly fat
+                  </Text>
+                </View>
+              </View>
+            </ImageBackground>
+          </View>
+        </View>
+        <View style={itemHorizontal.listCard}>
+          <View
+            style={{
+              ...itemHorizontal2.cardItem,
+              backgroundColor: '#FF4B91',
+              width: 150,
+              height: 150,
+            }}>
+            <ImageBackground
+              style={itemHorizontal2.cardImage2}
+              resizeMode="cover"
+              imageStyle={{borderRadius: 15}}
+              source={{
+                uri: 'https://gcdnb.pbrd.co/images/h4l6EiidiuTc.png?o=1',
+              }}>
+              <View style={itemHorizontal2.darkOverlay}></View>
+              <View style={itemHorizontal2.cardContent}>
+                <View style={itemHorizontal2.cardInfo}>
+                  <Text style={itemHorizontal2.cardTitle}>
+                    What To Eat And Avoid
+                  </Text>
+                </View>
+              </View>
+            </ImageBackground>
+          </View>
+        </View>
+      </ScrollView>
+    </ScrollView>
+  );
+};
+
 const styles = StyleSheet.create({
-  rowContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    width: 'auto',
-    paddingHorizontal: 20,
-  },
   container: {
     flex: 1,
     backgroundColor: colors.white(),
@@ -178,201 +249,6 @@ const styles = StyleSheet.create({
     padding: 10,
   },
 });
-const category = StyleSheet.create({
-  item: {
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 25,
-    alignItems: 'center',
-    backgroundColor: colors.grey(0.08),
-    marginHorizontal: 5,
-  },
-  title: {
-    fontFamily: fontType['Pjs-SemiBold'],
-    fontSize: 14,
-    lineHeight: 18,
-    color: colors.grey(),
-  },
-});
-
-const ListBlog = () => {
-  const handleButtonPress = () => {};
-  return (
-    <ScrollView style={{flex: 1}}>
-      <Text style={{...styles.title, paddingHorizontal: 24}}>Today</Text>
-      <ListToday data={TodayList} />
-      {/* <ScrollView
-        showsHorizontalScrollIndicator={false}
-        horizontal
-        contentContainerStyle={{gap: 0}}>
-        <View style={itemHorizontal.listCard}>
-          <View style={itemHorizontal.cardItem1}>
-            <Text style={itemHorizontal.cardImage}>270{'\n'} Calories</Text>
-            <View style={itemHorizontal.cardContent}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                <View style={{gap: 5, height: 'auto'}}>
-                  <Text style={itemHorizontal.cardCategory}>Breakfast</Text>
-                  <Text style={itemHorizontal.cardTitle}>2 Slice Omelet</Text>
-                  <TouchableOpacity
-                    onPress={handleButtonPress}
-                    style={styles.buttonContainer}>
-                    <Text style={styles.buttonedit}>Edit</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-          </View>
-        </View>
-        <View style={itemHorizontal.listCard}>
-          <View style={itemHorizontal.cardItem2}>
-            <Text style={itemHorizontal.cardImage2}>60 {'\n'} Calories</Text>
-            <View style={itemHorizontal.cardContent}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                <View style={{gap: 5, width: '100%'}}>
-                  <Text style={itemHorizontal.cardCategory}>A.M. Snack</Text>
-                  <Text style={itemHorizontal.cardTitle}>2 Slice Bread</Text>
-                </View>
-              </View>
-            </View>
-          </View>
-        </View>
-        <View style={itemHorizontal.listCard}>
-          <View style={itemHorizontal.cardItem3}>
-            <Text style={itemHorizontal.cardImage3}>400 {'\n'} Calories</Text>
-            <View style={itemHorizontal.cardContent}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                <View style={{gap: 5, width: '100%'}}>
-                  <Text style={itemHorizontal.cardCategory}>Lunch</Text>
-                  <Text style={itemHorizontal.cardTitle}>
-                    Chicken Gordon Blue
-                  </Text>
-                </View>
-              </View>
-            </View>
-          </View>
-        </View>
-        <View style={itemHorizontal.listCard}>
-          <View style={itemHorizontal.cardItem4}>
-            <Text style={itemHorizontal.cardImage4}>40 {'\n'} Calories</Text>
-            <View style={itemHorizontal.cardContent}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                <View style={{gap: 5, width: '100%'}}>
-                  <Text style={itemHorizontal.cardCategory}>P.M. Snack</Text>
-                  <Text style={itemHorizontal.cardTitle}>1 Medium Apple</Text>
-                </View>
-              </View>
-            </View>
-          </View>
-        </View>
-        <View style={itemHorizontal.listCard}>
-          <View style={itemHorizontal.cardItem5}>
-            <Text style={itemHorizontal.cardImage5}>450 {'\n'} Calories</Text>
-            <View style={itemHorizontal.cardContent}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                <View style={{gap: 5, width: '100%'}}>
-                  <Text style={itemHorizontal.cardCategory}>Dinner</Text>
-                  <Text style={itemHorizontal.cardTitle}>Seared Salmon</Text>
-                </View>
-              </View>
-            </View>
-          </View>
-        </View>
-      </ScrollView> */}
-
-      <Text style={{...styles.title, paddingHorizontal: 24}}>Quick Launch</Text>
-      <View style={styles.rowContainer}>
-        {dataQL.map((item, index) => (
-          <ListQL item={item} key={index} />
-        ))}
-      </View>
-      <Text style={{...styles.title, paddingHorizontal: 24}}>
-        Workout Routine
-      </Text>
-      {WorkoutList.map((item, index) => (
-        <ListHorizontal item={item} key={index} />
-      ))}
-
-      <Text style={{...styles.title, paddingHorizontal: 24}}>Learn</Text>
-      <ScrollView
-        showsHorizontalScrollIndicator={false}
-        horizontal
-        contentContainerStyle={{gap: 0}}>
-        <View style={itemHorizontal.listCard}>
-          <View
-            style={{
-              ...itemHorizontal2.cardItem,
-              backgroundColor: '#79AC78',
-              width: 150,
-              height: 150,
-            }}>
-            <ImageBackground
-              style={itemHorizontal2.cardImage}
-              resizeMode="cover"
-              imageStyle={{borderRadius: 15}}
-              source={{
-                uri: 'https://gcdnb.pbrd.co/images/7fE4eOuRTxt9.png?o=1',
-              }}>
-              <View style={itemHorizontal2.darkOverlay}></View>
-              <View style={itemHorizontal2.cardContent}>
-                <View style={itemHorizontal2.cardInfo}>
-                  <Text style={itemHorizontal2.cardTitle}>
-                    How to burn belly fat
-                  </Text>
-                </View>
-              </View>
-            </ImageBackground>
-          </View>
-        </View>
-        <View style={itemHorizontal.listCard}>
-          <View
-            style={{
-              ...itemHorizontal2.cardItem,
-              backgroundColor: '#FF4B91',
-              width: 150,
-              height: 150,
-            }}>
-            <ImageBackground
-              style={itemHorizontal2.cardImage2}
-              resizeMode="cover"
-              imageStyle={{borderRadius: 15}}
-              source={{
-                uri: 'https://gcdnb.pbrd.co/images/h4l6EiidiuTc.png?o=1',
-              }}>
-              <View style={itemHorizontal2.darkOverlay}></View>
-              <View style={itemHorizontal2.cardContent}>
-                <View style={itemHorizontal2.cardInfo}>
-                  <Text style={itemHorizontal2.cardTitle}>
-                    What To Eat And Avoid
-                  </Text>
-                </View>
-              </View>
-            </ImageBackground>
-          </View>
-        </View>
-      </ScrollView>
-    </ScrollView>
-  );
-};
 
 const itemKategori = StyleSheet.create({
   cardItem: {

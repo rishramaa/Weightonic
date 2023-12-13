@@ -2,13 +2,11 @@ import {
   StyleSheet,
   Text,
   View,
-  image,
   ScrollView,
   TouchableOpacity,
   Animated,
-  ActivityIndicator,
 } from 'react-native';
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef} from 'react';
 import {
   ArrowLeft,
   Like1,
@@ -18,13 +16,10 @@ import {
   More,
 } from 'iconsax-react-native';
 import {useNavigation} from '@react-navigation/native';
+import {HealtyEatingList} from '../../../data';
 import FastImage from 'react-native-fast-image';
 import {fontType, colors} from '../../assets/theme';
-import {formatNumber} from '../../utils/formatNumber';
-import {formatDate} from '../../utils/formatDate';
-import axios from 'axios';
-import ActionSheet from 'react-native-actions-sheet';
-import {HealtyEatingList} from '../../../data';
+//
 
 const DiscoverDetail = ({route}) => {
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -55,52 +50,6 @@ const DiscoverDetail = ({route}) => {
             : colors.grey(0.6),
       },
     }));
-    const [selectedBlog, setSelectedBlog] = useState(null);
-    const [loading, setLoading] = useState(true);
-
-    const actionSheetRef = useRef(null);
-
-    const openActionSheet = () => {
-      actionSheetRef.current?.show();
-    };
-
-    const closeActionSheet = () => {
-      actionSheetRef.current?.hide();
-    };
-
-    useEffect(() => {
-      getBlogById();
-    }, [blogId]);
-
-    const getBlogById = async () => {
-      try {
-        const response = await axios.get(
-          `https://656c578ae1e03bfd572e3520.mockapi.io/weightonic/${blogId}`,
-        );
-        setSelectedBlog(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    const navigateEdit = () => {
-      closeActionSheet();
-      navigation.navigate('EditDiscover', {blogId});
-    };
-    const handleDelete = async () => {
-      await axios
-        .delete(
-          `https://656c578ae1e03bfd572e3520.mockapi.io/weightonic/${blogId}`,
-        )
-        .then(() => {
-          closeActionSheet();
-          navigation.navigate('Discover');
-        })
-        .catch(error => {
-          console.error(error);
-        });
-    };
   };
   return (
     <Animated.View
@@ -108,6 +57,11 @@ const DiscoverDetail = ({route}) => {
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <ArrowLeft color={colors.white(1)} variant="Linear" size={24} />
+          <More
+            color={colors.white(1)}
+            variant="Linear"
+            style={{transform: [{rotate: '90deg'}]}}
+          />
         </TouchableOpacity>
       </View>
       <Animated.ScrollView
@@ -120,20 +74,23 @@ const DiscoverDetail = ({route}) => {
           paddingHorizontal: 24,
           paddingTop: 62,
           paddingBottom: 54,
-          backgroundColor: 'rgb(255, 0, 0)',
         }}>
-        <image style={styles.cardImage} source={{uri: item?.image}} />
+        <FastImage
+          style={styles.image}
+          source={{
+            uri: selectedBlog.image,
+            headers: {Authorization: 'someAuthToken'},
+            priority: FastImage.priority.high,
+          }}
+          resizeMode={FastImage.resizeMode.cover}></FastImage>
         <View
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
             marginTop: 5,
-          }}>
-          <Text style={styles.title}>{selectedBlog?.title}</Text>
-          <Text style={styles.description}>{selectedBlog?.description}</Text>
-        </View>
-        <Text style={styles.content}>{selectedBlog?.content}</Text>
-        {/* <Text style={styles.text}>
+          }}></View>
+        <Text style={styles.title}>{selectedBlog.title}</Text>
+        <Text style={styles.text}>
           Registered dietitian Brittany Rogers advises that consuming a protein
           source with each meal can help meet daily requirements. She notes,
           "Protein-containing foods can also help you feel more full." Here are
@@ -176,7 +133,7 @@ const DiscoverDetail = ({route}) => {
           fat rather than muscle tissue. The macronutrient's impact on metabolic
           rate and muscle preservation makes it a valuable component of various
           weight loss and body recomposition strategies.
-        </Text> */}
+        </Text>
       </Animated.ScrollView>
     </Animated.View>
   );

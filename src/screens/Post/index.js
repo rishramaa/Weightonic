@@ -11,7 +11,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
-import React, {useState, useCallback, useEffect} from 'react';
+import React, {useState, useCallback, useEffect, useRef} from 'react';
 import {
   BlogList,
   CalorieCounterList,
@@ -23,49 +23,41 @@ import {
 } from '../../../data';
 import {ItemPost} from '../../components';
 import {PostData, ProfileData} from '../../../data';
-import {Add, Edit, SearchNormal, SearchNormal1} from 'iconsax-react-native';
+import {
+  Add,
+  Edit,
+  Heart,
+  Logout,
+  MessageAdd,
+  Repeat,
+  SearchNormal,
+  SearchNormal1,
+} from 'iconsax-react-native';
 import {fontType, colors} from '../../assets/theme';
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import FastImage from 'react-native-fast-image';
 import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import ActionSheet from 'react-native-actions-sheet';
 
-const data = [
-  {id: 1, label: 'Breakfast'},
-  {id: 2, label: 'Lunch'},
-  {id: 3, label: 'Dinner'},
-  {id: 4, label: 'Drinks'},
-  {id: 5, label: 'Cookies'},
-];
-
-const ItemRecent = ({item}) => {
-  return (
-    <View style={recent.button}>
-      <Text style={recent.label}>{item.label}</Text>
-    </View>
-  );
-};
-const FlatListRecent = () => {
-  const renderItem = ({item}) => {
-    return <ItemRecent item={item} />;
-  };
-  return (
-    <FlatList
-      data={data}
-      keyExtractor={item => item.id}
-      renderItem={item => renderItem({...item})}
-      ItemSeparatorComponent={() => <View style={{width: 10}} />}
-      contentContainerStyle={{paddingHorizontal: 24, paddingVertical: 10}}
-      horizontal
-      showsHorizontalScrollIndicator={false}
-    />
-  );
-};
 const Post = () => {
   const navigation = useNavigation();
   const [searchText, setSearchText] = useState('');
   const [loading, setLoading] = useState(true);
+  const [iconStates, setIconStates] = useState({
+    bookmarked: {variant: 'Linear', color: colors.grey(0.6)},
+  });
   const [blogData, setBlogData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [PostData, setPostData] = useState(null);
+  const actionSheetRef = useRef(null);
+  const openActionSheet = () => {
+    actionSheetRef.current?.show();
+  };
+  const closeActionSheet = () => {
+    actionSheetRef.current?.hide();
+  };
   useEffect(() => {
     const subscriber = firestore()
       .collection('Post')
@@ -101,6 +93,16 @@ const Post = () => {
       setRefreshing(false);
     }, 1500);
   }, []);
+  const handleLogout = async () => {
+    try {
+      closeActionSheet();
+      await auth().signOut();
+      await AsyncStorage.removeItem('userData');
+      navigation.replace('Login');
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <View
       style={styles.container}
@@ -148,7 +150,10 @@ const Post = () => {
       <TouchableOpacity
         style={styles.floatingButton}
         onPress={() => navigation.navigate('AddPost')}>
-        <Add color={colors.white()} variant="Linear" size={20} />
+        <Add color={colors.white()} variant="Linear" size={30} />
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.floatingButton1} onPress={handleLogout}>
+        <Logout color={colors.white()} variant="Linear" size={30} />
       </TouchableOpacity>
     </View>
   );
@@ -174,6 +179,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingBottom: 10,
     gap: 10,
+    borderBlockEndColor: '#A8DF8E',
+    borderWidth: 1,
   },
   container: {
     flex: 1,
@@ -205,10 +212,10 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   floatingButton: {
-    backgroundColor: '#A8DF8E',
+    backgroundColor: 'rgba(168, 223, 142, 0.9)',
     padding: 15,
     position: 'absolute',
-    bottom: 100,
+    bottom: 170,
     right: 24,
     borderRadius: 10,
     shadowColor: colors.blue(),
@@ -220,6 +227,87 @@ const styles = StyleSheet.create({
     shadowRadius: 4.65,
 
     elevation: 8,
+  },
+  floatingButton1: {
+    backgroundColor: 'rgba(255, 0, 0, 0.5)',
+    padding: 15,
+    position: 'absolute',
+    bottom: 100,
+    right: 24,
+    borderRadius: 10,
+  },
+});
+const itemHorizontal = StyleSheet.create({
+  listCard: {
+    paddingHorizontal: 24,
+    paddingVertical: 10,
+    paddingTop: 16,
+    backgroundColor: '#FFFFFF', // Warna latar belakang item post
+    borderRadius: 10,
+    borderColor: '#A8DF8E',
+    borderWidth: 1,
+    marginBottom: 16,
+    marginLeft: 24,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  likeButton: {
+    marginRight: 16,
+  },
+  commentButton: {
+    marginRight: 16,
+  },
+  shareButton: {},
+  cardItem1: {
+    backgroundColor: colors.black(0.03),
+    borderRadius: 15,
+    borderColor: '#A8DF8E',
+  },
+  cardCategory: {
+    marginTop: 10,
+    color: 'black',
+    fontSize: 15,
+    fontFamily: fontType['Pjs-Bold'],
+  },
+  cardTitle: {
+    marginBottom: 10,
+    fontSize: 14,
+    fontFamily: fontType['Pjs-SemiBold'],
+    color: 'black',
+  },
+  cardText: {
+    fontSize: 10,
+    fontFamily: fontType['Pjs-Medium'],
+    color: colors.blue(0.6),
+  },
+  cardImage: {
+    width: 350,
+    height: 200,
+    backgroundColor: '#A8DF8E',
+    borderRadius: 10,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cardInfo: {
+    flexDirection: 'row',
+    gap: 5,
+    alignItems: 'center',
+  },
+  cardContent: {
+    justifyContent: 'space-between',
+    flex: 1,
+    borderColor: '#32a852',
   },
 });
 const profile = StyleSheet.create({

@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import auth from '@react-native-firebase/auth';
 import {
   View,
   Text,
@@ -7,6 +8,7 @@ import {
   StyleSheet,
   ScrollView,
   ActivityIndicator,
+  KeyboardAvoidingView,
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import {ArrowLeft, AddSquare, Add} from 'iconsax-react-native';
@@ -37,6 +39,7 @@ const AddPostForm = () => {
 
     setLoading(true);
     try {
+      const authorId = auth().currentUser.uid;
       await reference.putFile(image);
       const url = await reference.getDownloadURL();
       await firestore().collection('Post').add({
@@ -44,6 +47,7 @@ const AddPostForm = () => {
         description: blogData.description,
         content: blogData.content,
         image: url,
+        authorId,
       });
       setLoading(false);
       console.log('Blog added!');
@@ -70,113 +74,122 @@ const AddPostForm = () => {
       });
   };
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <ArrowLeft color={colors.white()} variant="Linear" size={24} />
-        </TouchableOpacity>
-        <View style={{flex: 1, alignItems: 'center'}}>
-          <Text style={styles.title}>Add Post</Text>
-        </View>
-      </View>
-      <ScrollView
-        contentContainerStyle={{
-          paddingHorizontal: 24,
-          paddingVertical: 10,
-          gap: 10,
-        }}>
-        <View style={textInput.borderDashed}>
-          <TextInput
-            placeholder="Title"
-            value={blogData.title}
-            onChangeText={text => handleChange('title', text)}
-            placeholderTextColor={colors.grey(0.6)}
-            multiline
-            style={textInput.title}
-          />
-        </View>
-        <View style={textInput.borderDashed}>
-          <TextInput
-            placeholder="Description"
-            value={blogData.description}
-            onChangeText={text => handleChange('description', text)}
-            placeholderTextColor={colors.grey(0.6)}
-            multiline
-            style={textInput.description}
-          />
-        </View>
-        <View style={[textInput.borderDashed, {minHeight: 250}]}>
-          <TextInput
-            placeholder="Content"
-            value={blogData.content}
-            onChangeText={text => handleChange('content', text)}
-            placeholderTextColor={colors.grey(0.6)}
-            multiline
-            style={textInput.content}
-          />
-        </View>
-        {image ? (
-          <View style={{position: 'relative'}}>
-            <FastImage
-              style={{width: '100%', height: 127, borderRadius: 5}}
-              source={{
-                uri: image,
-                headers: {Authorization: 'someAuthToken'},
-                priority: FastImage.priority.high,
-              }}
-              resizeMode={FastImage.resizeMode.cover}
-            />
-            <TouchableOpacity
-              style={{
-                position: 'absolute',
-                top: -5,
-                right: -5,
-                backgroundColor: colors.blue(),
-                borderRadius: 25,
-              }}
-              onPress={() => setImage(null)}>
-              <Add
-                size={20}
-                variant="Linear"
-                color={colors.white()}
-                style={{transform: [{rotate: '45deg'}]}}
-              />
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <TouchableOpacity onPress={handleImagePick}>
-            <View
-              style={[
-                textInput.borderDashed,
-                {
-                  gap: 10,
-                  paddingVertical: 30,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                },
-              ]}>
-              <AddSquare color={colors.grey(0.6)} variant="Linear" size={42} />
-              <Text
-                style={{
-                  fontFamily: fontType['Pjs-Regular'],
-                  fontSize: 12,
-                  color: colors.grey(0.6),
-                }}>
-                Upload Thumbnail
-              </Text>
-            </View>
+    <KeyboardAvoidingView
+      style={{flex: 1}}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      enabled>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <ArrowLeft color={colors.white()} variant="Linear" size={24} />
           </TouchableOpacity>
-        )}
-      </ScrollView>
-      <TouchableOpacity style={styles.button} onPress={handleUpload}>
-        <Text style={styles.buttonLabel}>Upload</Text>
-      </TouchableOpacity>
-      {loading && (
-        <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color={colors.blue()} />
+          <View style={{flex: 1, alignItems: 'center'}}>
+            <Text style={styles.title}>Add Post</Text>
+          </View>
         </View>
-      )}
-    </View>
+        <ScrollView
+          contentContainerStyle={{
+            paddingHorizontal: 24,
+            paddingVertical: 10,
+            gap: 10,
+          }}>
+          <View style={textInput.borderDashed}>
+            <TextInput
+              placeholder="Title"
+              value={blogData.title}
+              onChangeText={text => handleChange('title', text)}
+              placeholderTextColor={colors.grey(0.6)}
+              multiline
+              style={textInput.title}
+            />
+          </View>
+          <View style={textInput.borderDashed}>
+            <TextInput
+              placeholder="Description"
+              value={blogData.description}
+              onChangeText={text => handleChange('description', text)}
+              placeholderTextColor={colors.grey(0.6)}
+              multiline
+              style={textInput.description}
+            />
+          </View>
+          <View style={[textInput.borderDashed, {minHeight: 250}]}>
+            <TextInput
+              placeholder="Content"
+              value={blogData.content}
+              onChangeText={text => handleChange('content', text)}
+              placeholderTextColor={colors.grey(0.6)}
+              multiline
+              style={textInput.content}
+            />
+          </View>
+          {image ? (
+            <View style={{position: 'relative'}}>
+              <FastImage
+                style={{width: '100%', height: 127, borderRadius: 5}}
+                source={{
+                  uri: image,
+                  headers: {Authorization: 'someAuthToken'},
+                  priority: FastImage.priority.high,
+                }}
+                resizeMode={FastImage.resizeMode.cover}
+              />
+              <TouchableOpacity
+                style={{
+                  position: 'absolute',
+                  top: -5,
+                  right: -5,
+                  backgroundColor: colors.blue(),
+                  borderRadius: 25,
+                }}
+                onPress={() => setImage(null)}>
+                <Add
+                  size={20}
+                  variant="Linear"
+                  color={colors.white()}
+                  style={{transform: [{rotate: '45deg'}]}}
+                />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <TouchableOpacity onPress={handleImagePick}>
+              <View
+                style={[
+                  textInput.borderDashed,
+                  {
+                    gap: 10,
+                    paddingVertical: 30,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  },
+                ]}>
+                <AddSquare
+                  color={colors.grey(0.6)}
+                  variant="Linear"
+                  size={42}
+                />
+                <Text
+                  style={{
+                    fontFamily: fontType['Pjs-Regular'],
+                    fontSize: 12,
+                    color: colors.grey(0.6),
+                  }}>
+                  Upload Thumbnail
+                </Text>
+              </View>
+            </TouchableOpacity>
+          )}
+        </ScrollView>
+        <TouchableOpacity style={styles.button} onPress={handleUpload}>
+          <Text style={styles.buttonLabel}>Upload</Text>
+        </TouchableOpacity>
+        {loading && (
+          <View style={styles.loadingOverlay}>
+            <ActivityIndicator size="large" color={colors.blue()} />
+          </View>
+        )}
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 
